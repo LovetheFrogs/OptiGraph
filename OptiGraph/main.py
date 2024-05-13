@@ -7,6 +7,7 @@ def main():
 def run():
     print("Welcome to Optigraph")
     nodeList = []
+    graph = []
     option = -1
     while True:
         menu()
@@ -15,20 +16,22 @@ def run():
             option = int(input("Select an option > "))
         
         if option == 1:
-            add_node(nodeList)
+            add_node(nodeList, graph)
         elif option == 2:
-            delete_node(nodeList)
+            delete_node(nodeList, graph)
         elif option == 3:
             show_nodes(nodeList)
 
 
-def add_node(nodeList):
+def add_node(nodeList, graph):
     print()
     if not nodeList:
         print("Enter the center node coordinates")
         xCoord = int(input("x = "))
         yCoord = int(input("y = "))
         print("Adding node x: " + str(xCoord) + ", y: " + str(yCoord) + " as center of the graph.")
+        graph.append([])
+        nodeList.append([xCoord, yCoord, []])
     else:
         print("Enter the node coordinates")
         xCoord = int(input("x = "))
@@ -39,23 +42,27 @@ def add_node(nodeList):
             xCoord = int(input("x = "))
             yCoord = int(input("y = "))
         print("Adding node x: " + str(xCoord) + ", y: " + str(yCoord) + " to the graph.")
-    nodeList.append([xCoord, yCoord, []])
-    calculate_distance(nodeList)
+        nodeList.append([xCoord, yCoord, []])
+        graph.append([0])
+        graph[0].append(len(nodeList) - 1)
+        calculate_distance(nodeList)
 
 
-def delete_node(nodeList):
+def delete_node(nodeList, graph):
     for i, node in enumerate(nodeList):
         if i == 0:
-            print(str(i) + ") " + str(node) + " CENTER")
+            print(str(i) + ") " + str(node[:2]) + " CENTER")
         else:
-            print(str(i) + ") " + str(node))
+            print(str(i) + ") " + str(node[:2]))
     print()
     toDelete = int(input(("Select a node to delete > ")))
-    while toDelete == 0:
-        print("Can't delete center node")
+    while toDelete == 0 or not nodeList[toDelete]:
+        print("Can't delete center node or already deleted node")
         toDelete = int(input(("Select a node to delete > ")))
     print("Deleted node " + str(toDelete) + " x: " + str(nodeList[toDelete][0]) + ", y:" + str(nodeList[toDelete][1]))
-    nodeList.pop(toDelete)
+    nodeList[toDelete] = []
+    graph.pop(toDelete)
+    graph[0].pop(toDelete - 1)
     calculate_distance(nodeList)
 
 
@@ -69,9 +76,11 @@ def show_nodes(nodeList):
 
 def calculate_distance(nodeList):
     for node in nodeList:
-        node[2] = []
-        for x in nodeList:
-            node[2].append(math.sqrt(((x[0] - node[0]) ** 2) + ((x[1] - node[1]) ** 2)))
+        if node:
+            node[2] = []
+            for x in nodeList:
+                if x:
+                    node[2].append(math.sqrt(((x[0] - node[0]) ** 2) + ((x[1] - node[1]) ** 2)))
 
 
 def menu():
