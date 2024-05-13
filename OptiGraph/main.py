@@ -32,6 +32,11 @@ def add_node(nodeList):
         print("Enter the node coordinates")
         xCoord = input("x = ")
         yCoord = input("y = ")
+        while (xCoord, yCoord) in nodeList:
+            print("Node is already in graph.")
+            print("Enter the node coordinates")
+            xCoord = input("x = ")
+            yCoord = input("y = ")
         print("Adding node x: " + xCoord + ", y: " + yCoord + " to the graph.")
         nodeList.append((xCoord, yCoord))
 
