@@ -62,9 +62,9 @@ def delete_node(nodeList):
 def show_nodes(nodeList):
     for i, node in enumerate(nodeList):
         if i == 0:
-            print(str(i) + ") " + str(node) + " CENTER")
+            print(str(i) + ") " + str(node[:2]) + " CENTER")
         else:
-            print(str(i) + ") " + str(node))
+            print(str(i) + ") " + str(node[:2]))
 
 
 def calculate_distance(nodeList):
