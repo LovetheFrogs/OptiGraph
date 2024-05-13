@@ -17,7 +17,7 @@ def run():
         elif option == 2:
             delete_node(nodeList)
         elif option == 3:
-            show_nodes()
+            show_nodes(nodeList)
 
 
 def add_node(nodeList):
@@ -43,7 +43,10 @@ def add_node(nodeList):
 
 def delete_node(nodeList):
     for i, node in enumerate(nodeList):
-        print(str(i) + ") " + str(node))
+        if i == 0:
+            print(str(i) + ") " + str(node) + " CENTER")
+        else:
+            print(str(i) + ") " + str(node))
     print()
     toDelete = int(input(("Select a node to delete > ")))
     while toDelete == 0:
@@ -52,6 +55,13 @@ def delete_node(nodeList):
     print("Deleted node " + str(toDelete) + " x: " + str(nodeList[toDelete][0]) + ", y:" + str(nodeList[toDelete][1]))
     nodeList.pop(toDelete)
 
+
+def show_nodes(nodeList):
+    for i, node in enumerate(nodeList):
+        if i == 0:
+            print(str(i) + ") " + str(node) + " CENTER")
+        else:
+            print(str(i) + ") " + str(node))
 
 def menu():
     print()
