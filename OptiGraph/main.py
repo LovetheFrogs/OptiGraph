@@ -1,3 +1,5 @@
+import math
+
 def main():
     run()
 
@@ -27,7 +29,6 @@ def add_node(nodeList):
         xCoord = int(input("x = "))
         yCoord = int(input("y = "))
         print("Adding node x: " + str(xCoord) + ", y: " + str(yCoord) + " as center of the graph.")
-        nodeList.append((xCoord, yCoord))
     else:
         print("Enter the node coordinates")
         xCoord = int(input("x = "))
@@ -38,7 +39,8 @@ def add_node(nodeList):
             xCoord = int(input("x = "))
             yCoord = int(input("y = "))
         print("Adding node x: " + str(xCoord) + ", y: " + str(yCoord) + " to the graph.")
-        nodeList.append((xCoord, yCoord))
+    nodeList.append([xCoord, yCoord, []])
+    calculate_distance(nodeList)
 
 
 def delete_node(nodeList):
@@ -54,14 +56,23 @@ def delete_node(nodeList):
         toDelete = int(input(("Select a node to delete > ")))
     print("Deleted node " + str(toDelete) + " x: " + str(nodeList[toDelete][0]) + ", y:" + str(nodeList[toDelete][1]))
     nodeList.pop(toDelete)
+    calculate_distance(nodeList)
 
 
 def show_nodes(nodeList):
     for i, node in enumerate(nodeList):
         if i == 0:
-            print(str(i) + ") " + str(node) + " CENTER")
+            print(str(i) + ") " + str(node[:2]) + " CENTER")
         else:
-            print(str(i) + ") " + str(node))
+            print(str(i) + ") " + str(node[:2]))
+
+
+def calculate_distance(nodeList):
+    for node in nodeList:
+        node[2] = []
+        for x in nodeList:
+            node[2].append(math.sqrt(((x[0] - node[0]) ** 2) + ((x[1] - node[1]) ** 2)))
+
 
 def menu():
     print()
