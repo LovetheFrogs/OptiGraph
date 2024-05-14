@@ -7,5 +7,6 @@ module org.lovethefrogs.optigraph {
     opens org.lovethefrogs.optigraph to javafx.fxml;
     exports org.lovethefrogs.optigraph;
     exports org.lovethefrogs.optigraph.controller;
+    exports org.lovethefrogs.optigraph.model;
     opens org.lovethefrogs.optigraph.controller to javafx.fxml;
 }
