@@ -75,7 +75,7 @@
             <!-- Default configuration for running with: mvn clean javafx:run -->
             <id>default-cli</id>
             <configuration>
-              <mainClass>org.lovethefrogs.optigraph/org.lovethefrogs.optigraph.HelloApplication</mainClass>
+              <mainClass>org.lovethefrogs.optigraph/org.lovethefrogs.optigraph.OptiGraphApplication</mainClass>
               <launcher>app</launcher>
               <jlinkZipName>app</jlinkZipName>
               <jlinkImageName>app</jlinkImageName>
