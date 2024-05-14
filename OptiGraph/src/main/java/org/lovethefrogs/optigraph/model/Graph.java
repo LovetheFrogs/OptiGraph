@@ -7,12 +7,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Graph {
-    private ArrayList<Node> nodes;
+    private HashMap<Integer, Node> nodes;
+    private ArrayList<Node> nodeList;
     private int nodeCount;
     private HashMap<Node, HashMap<Node, Double>> graph;
     private Node center;
     public Graph() {
-        this.nodes = new ArrayList<>();
+        this.nodes = new HashMap();
+        this.nodeList = new ArrayList<>();
         this.nodeCount = 0;
         this.graph = new HashMap<>();
     }
@@ -21,7 +23,7 @@ public class Graph {
         return nodeCount;
     }
 
-    public ArrayList<Node> getNodes() {
+    public HashMap<Integer, Node> getNodes() {
         return nodes;
     }
 
@@ -35,13 +37,14 @@ public class Graph {
 
     public Node addNode(String name, int x, int y) {
         Node newNode = new Node(this.nodeCount, name, new Coords(x, y), this.isEmpty());
-        nodes.add(newNode);
+        nodes.put(newNode.getId(), newNode);
+        nodeList.add(newNode);
         newNode.setDist(computeDistances(newNode));
 
         if (isEmpty()) this.center= newNode;
 
         graph.put(newNode, createVertexList(newNode));
-        for (Node node : this.nodes) {
+        for (Node node : nodeList) {
             if (!node.equals(newNode)) {
                 node.setDist(computeDistances(node));
                 HashMap<Node, Double> aux = graph.get(node);
@@ -56,13 +59,14 @@ public class Graph {
     }
 
     public Node removeNode(Node node) {
-        if (!nodes.contains(node)) return null;
-        for (Node aux : nodes) {
+        if (!nodeList.contains(node) || node.isCenter()) return null;
+        for (Node aux : nodeList) {
             HashMap<Node, Double> connected = graph.get(aux);
             connected.remove(node);
         }
         graph.remove(node);
-        nodes.remove(node);
+        nodeList.remove(node);
+        nodes.remove(node.getId());
         this.nodeCount--;
 
         return node;
@@ -70,7 +74,7 @@ public class Graph {
 
     private HashMap<Node, Double> createVertexList(Node newNode) {
         HashMap<Node, Double> connections = new HashMap<>();
-        for (Node obj : this.nodes) {
+        for (Node obj : this.nodeList) {
             if (!newNode.equals(obj)) connections.put(obj, newNode.getDist().get(obj.getId()));
         }
         return connections;
@@ -78,7 +82,7 @@ public class Graph {
 
     public ArrayList<Double> computeDistances(Node node) {
         ArrayList<Double> dist = new ArrayList<>();
-        for (Node element : this.nodes) dist.add(node.getCoords().distance(element.getCoords()));
+        for (Node element : this.nodeList) dist.add(node.getCoords().distance(element.getCoords()));
         return dist;
     }
 }
