@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListCell?>
+<?import javafx.scene.layout.HBox?>
+
+<fx:root type="javafx.scene.control.ListCell" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+    <graphic>
+        <HBox alignment="CENTER" spacing="20.0">
+            <children>
+                <Label fx:id="nameLabel" text="Label" />
+                <Label fx:id="coordsLabel" layoutX="432.0" layoutY="8.0" text="Label" />
+                <Label fx:id="idLabel" layoutX="824.0" layoutY="4.0" />
+            </children>
+        </HBox>
+    </graphic>
+</fx:root>
