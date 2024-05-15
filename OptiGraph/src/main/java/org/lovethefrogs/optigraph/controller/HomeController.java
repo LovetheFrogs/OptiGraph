@@ -84,7 +84,11 @@ public class HomeController {
         ArrayList<Text> nodeLabels = new ArrayList<>();
         for (Node node : graph.getNodeList()) {
             Circle circle = generateCircle(node.getCoords().getX(), node.getCoords().getY());
-            circle.setFill(Color.BLACK);
+            if (node.isCenter()) {
+                circle.setFill(Color.RED);
+            } else {
+                circle.setFill(Color.BLACK);
+            }
             nodes.add(circle);
 
             Text nodeName = new Text(node.getName());
