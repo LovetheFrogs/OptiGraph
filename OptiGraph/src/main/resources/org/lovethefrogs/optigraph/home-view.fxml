@@ -39,12 +39,10 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
@@ -70,7 +68,7 @@
         </Menu>
       </menus>
     </MenuBar>
-      <SplitPane dividerPositions="0.39198218262806234" prefHeight="564.0" prefWidth="900.0">
+      <SplitPane dividerPositions="0.5" prefHeight="564.0" prefWidth="900.0">
         <items>
             <VBox alignment="TOP_CENTER" prefHeight="551.0" prefWidth="349.0">
                <children>
@@ -81,12 +79,12 @@
                      <children>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Name">
                            <HBox.margin>
-                              <Insets left="10.0" />
+                              <Insets left="10.0" top="10.0" />
                            </HBox.margin>
                         </Text>
                         <TextField fx:id="nameInput">
                            <HBox.margin>
-                              <Insets left="10.0" />
+                              <Insets left="10.0" top="10.0" />
                            </HBox.margin>
                         </TextField>
                      </children>
@@ -95,12 +93,12 @@
                      <children>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Coord X">
                            <HBox.margin>
-                              <Insets left="10.0" />
+                              <Insets left="10.0" top="10.0" />
                            </HBox.margin>
                         </Text>
                         <TextField fx:id="xCoordInput">
                            <HBox.margin>
-                              <Insets left="10.0" />
+                              <Insets left="10.0" top="10.0" />
                            </HBox.margin>
                         </TextField>
                      </children>
@@ -109,12 +107,12 @@
                      <children>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Coord Y">
                            <HBox.margin>
-                              <Insets left="10.0" />
+                              <Insets left="10.0" top="10.0" />
                            </HBox.margin>
                         </Text>
                         <TextField fx:id="yCoordInput">
                            <HBox.margin>
-                              <Insets left="10.0" />
+                              <Insets left="10.0" top="10.0" />
                            </HBox.margin>
                         </TextField>
                      </children>
@@ -156,20 +154,22 @@
                         </Button>
                      </children>
                   </HBox>
+                  <Separator prefWidth="200.0">
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                  </Separator>
+                  <Button fx:id="plotButton" mnemonicParsing="false" onAction="#onPlotButtonClick" text="Plot Nodes">
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                  </Button>
                </children>
             </VBox>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="553.0" prefWidth="593.0">
-               <children>
-                  <ScrollPane layoutX="6.0" prefHeight="551.0" prefWidth="543.0">
-                    <content>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="540.0" prefWidth="525.0" />
-                    </content>
-                  </ScrollPane>
-               </children>
-            </AnchorPane>
+            <Pane fx:id="graphPane" prefHeight="200.0" prefWidth="200.0" />
         </items>
       </SplitPane>
-    <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+    <HBox id="HBox" alignment="BOTTOM_CENTER" spacing="5.0" VBox.vgrow="NEVER">
       <children>
         <Label maxHeight="1.7976931348623157E308" maxWidth="-1.0" text="OptiGraph" HBox.hgrow="ALWAYS">
           <font>
