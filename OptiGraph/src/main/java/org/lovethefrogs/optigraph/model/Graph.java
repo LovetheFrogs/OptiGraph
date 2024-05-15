@@ -31,6 +31,10 @@ public class Graph {
         return center;
     }
 
+    public ArrayList<Node> getNodeList() {
+        return nodeList;
+    }
+
     public boolean isEmpty() {
         return this.nodeCount == 0;
     }
