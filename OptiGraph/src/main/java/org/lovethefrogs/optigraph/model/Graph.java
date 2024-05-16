@@ -59,15 +59,25 @@ public class Graph {
         }
     }
 
-    private double[][] populateMatrix() {
+    private double[][] populateMatrix(boolean dijkstraMode) {
         double[][] mat = new double[nodeCount][nodeCount];
 
         for (int i = 0; i < nodeCount; i++) {
             for (int j = 0; j < nodeCount; j++) mat[i][j] = Double.POSITIVE_INFINITY;
         }
+        if (!dijkstraMode) {
+            for (List<Double> edge : graph) {
+                mat[edge.get(0).intValue()][edge.get(1).intValue()] = edge.get(2);
+            }
+        } else {
+            for (List<Double> edge : graph) {
+                if (nodes.get(edge.get(0).intValue()).equals(center) || nodes.get(edge.get(1).intValue()).equals(center)) {
+                    if (!nodes.get(edge.get(0).intValue()).equals(center)) mat[edge.get(0).intValue()][edge.get(1).intValue()] = edge.get(2) + (nodes.get(edge.get(0).intValue()).getCoords().getX() + nodes.get(edge.get(0).intValue()).getCoords().getY()) * 0.7;
+                    else mat[edge.get(0).intValue()][edge.get(1).intValue()] = edge.get(2) + (nodes.get(edge.get(1).intValue()).getCoords().getX() + nodes.get(edge.get(1).intValue()).getCoords().getY()) * 0.7;
 
-        for (List<Double> edge : graph) {
-            mat[edge.get(0).intValue()][edge.get(1).intValue()] = edge.get(2);
+                }
+                else mat[edge.get(0).intValue()][edge.get(1).intValue()] = edge.get(2);
+            }
         }
 
         return mat;
@@ -167,7 +177,7 @@ public class Graph {
     }
 
     public ArrayList<List<Integer>> prim() {
-        double[][] g = populateMatrix();
+        double[][] g = populateMatrix(false);
         int n = nodeCount;
         ArrayList<List<Integer>> edgeList = new ArrayList<>();
         boolean[] visited = new boolean[n];
@@ -207,7 +217,7 @@ public class Graph {
 
     public ArrayList<List<Integer>> dijkstra() {
         int src = center.getId();
-        double[][] graphMatrix = populateMatrix();
+        double[][] graphMatrix = populateMatrix(true);
         int n = nodeCount;
         double[] distances = new double[n];
         int[] parent = new int[n];
