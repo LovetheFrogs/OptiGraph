@@ -11,12 +11,15 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import org.lovethefrogs.optigraph.model.Graph;
 import org.lovethefrogs.optigraph.model.Node;
 import org.lovethefrogs.optigraph.utils.NodeCellFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class HomeController {
     private static double PANE_WIDTH;
@@ -77,9 +80,11 @@ public class HomeController {
 
     @FXML
     protected void onPlotButtonClick() {
+        ArrayList<List<Integer>> result = graph.dijkstra();
         PANE_HEIGHT = graphPane.getHeight();
         PANE_WIDTH = graphPane.getWidth();
         ArrayList<Circle> nodes = new ArrayList<>();
+        ArrayList<Line> edges = new ArrayList<>();
         graphPane.getChildren().clear();
         ArrayList<Text> nodeLabels = new ArrayList<>();
         for (Node node : graph.getNodeList()) {
@@ -96,16 +101,38 @@ public class HomeController {
             nodeName.setY(circle.getCenterY() - 10);
             nodeLabels.add(nodeName);
         }
+        HashMap<Integer, Node> dict = graph.getNodes();
+        for (List<Integer> e : result) {
+            Node a = dict.get(e.get(0));
+            Node b = dict.get(e.get(1));
+            Line edge = generateEdge(a.getCoords().getX(), a.getCoords().getY(), b.getCoords().getX(), b.getCoords().getY());
+            edges.add(edge);
+        }
+
         for (Circle circle : nodes) graphPane.getChildren().add(circle);
         for (Text text : nodeLabels) graphPane.getChildren().add(text);
+        for (Line line : edges) graphPane.getChildren().add(line);
     }
 
-    public static Circle generateCircle(double x, double y) {
+    private static Circle generateCircle(double x, double y) {
         double scaledX = (x / (MAX_COORD * 1.10)) * (PANE_WIDTH / 2);
         double scaledY = (y / (MAX_COORD * 1.10)) * (PANE_HEIGHT / 2);
         double mappedX = scaledX + (PANE_WIDTH / 2);
         double mappedY = (PANE_HEIGHT / 2) - scaledY;
         return new Circle(mappedX, mappedY, 5);
+    }
+
+    private static Line generateEdge(double x1, double y1, double x2, double y2) {
+        double scaledX1 = (x1 / (MAX_COORD * 1.10)) * (PANE_WIDTH / 2);
+        double scaledY1 = (y1 / (MAX_COORD * 1.10)) * (PANE_HEIGHT / 2);
+        double scaledX2 = (x2 / (MAX_COORD * 1.10)) * (PANE_WIDTH / 2);
+        double scaledY2 = (y2 / (MAX_COORD * 1.10)) * (PANE_HEIGHT / 2);
+        double mappedX1 = scaledX1 + (PANE_WIDTH / 2);
+        double mappedY1 = (PANE_HEIGHT / 2) - scaledY1;
+        double mappedX2 = scaledX2 + (PANE_WIDTH / 2);
+        double mappedY2 = (PANE_HEIGHT / 2) - scaledY2;
+
+        return new Line(mappedX1, mappedY1, mappedX2, mappedY2);
     }
 
 }
