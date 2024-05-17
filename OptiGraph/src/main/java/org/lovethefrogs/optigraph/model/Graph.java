@@ -4,6 +4,7 @@ import org.lovethefrogs.optigraph.utils.Coords;
 import org.lovethefrogs.optigraph.utils.Sort;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 public class Graph {
     private HashMap<Integer, Node> nodes;
@@ -215,8 +216,9 @@ public class Graph {
     }
 
 
-    public ArrayList<List<Integer>> dijkstra() {
+    public ArrayList<List<Integer>> dijkstra(Consumer<Double> progressUpdater) throws InterruptedException {
         int src = center.getId();
+        int step = 0;
         double[][] graphMatrix = populateMatrix(true);
         int n = nodeCount;
         double[] distances = new double[n];
@@ -242,6 +244,8 @@ public class Graph {
                     parent[v] = u;
                 }
             }
+            if (progressUpdater != null) progressUpdater.accept((double) step);
+            step++;
         }
 
         ArrayList<List<Integer>> edgeList = new ArrayList<>();

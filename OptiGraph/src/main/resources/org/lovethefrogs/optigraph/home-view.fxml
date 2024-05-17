@@ -39,6 +39,7 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
@@ -68,7 +69,7 @@
         </Menu>
       </menus>
     </MenuBar>
-      <SplitPane dividerPositions="0.5" prefHeight="564.0" prefWidth="900.0">
+      <SplitPane dividerPositions="0.40757238307349664" prefHeight="564.0" prefWidth="900.0">
         <items>
             <VBox alignment="TOP_CENTER" prefHeight="551.0" prefWidth="349.0">
                <children>
@@ -169,7 +170,7 @@
             <Pane fx:id="graphPane" prefHeight="200.0" prefWidth="200.0" />
         </items>
       </SplitPane>
-    <HBox id="HBox" alignment="BOTTOM_CENTER" spacing="5.0" VBox.vgrow="NEVER">
+    <HBox id="HBox" alignment="BOTTOM_CENTER" prefHeight="43.0" prefWidth="900.0" spacing="5.0" VBox.vgrow="NEVER">
       <children>
         <Label maxHeight="1.7976931348623157E308" maxWidth="-1.0" text="OptiGraph" HBox.hgrow="ALWAYS">
           <font>
@@ -179,7 +180,19 @@
             <Color red="0.625" green="0.625" blue="0.625" fx:id="x4" />
           </textFill>
         </Label>
-        <Pane prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
+        <Pane prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <HBox prefHeight="20.0" prefWidth="734.0">
+                     <children>
+                        <ProgressBar fx:id="progressBar" prefHeight="20.0" prefWidth="423.0" progress="0.0" />
+                        <Label fx:id="progressLabel">
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+               </children></Pane>
         <Label font="$x3" maxWidth="-1.0" text="By LovetheFrogs" textFill="$x4" HBox.hgrow="NEVER" />
       </children>
       <padding>

@@ -38,7 +38,7 @@ public class GraphTest extends TestCase {
     }
 
     public void testDijkstra() {
-        ArrayList<List<Integer>> result = graph.dijkstra();
+        ArrayList<List<Integer>> result = graph.dijkstra(null);
         System.out.println(result);
     }
 
@@ -68,7 +68,7 @@ public class GraphTest extends TestCase {
             endTime = System.nanoTime();
             long executionTimeKruskal = (endTime - startTime) / 1000000;
             startTime = System.nanoTime();
-            graph.dijkstra();
+            graph.dijkstra(null);
             endTime = System.nanoTime();
             long executionTimeDijkstra = (endTime - startTime) / 1000000;
             System.out.println("Short Prim takes " + executionTimePrim + "ms");
@@ -84,7 +84,7 @@ public class GraphTest extends TestCase {
             endTime = System.nanoTime();
             executionTimeKruskal = (endTime - startTime) / 1000000;
             startTime = System.nanoTime();
-            graph.dijkstra();
+            graph.dijkstra(null);
             endTime = System.nanoTime();
             executionTimeDijkstra = (endTime - startTime) / 1000000;
             System.out.println("Long Prim takes " + executionTimePrim + "ms");
