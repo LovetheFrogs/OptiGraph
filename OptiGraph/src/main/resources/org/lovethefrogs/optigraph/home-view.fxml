@@ -57,14 +57,14 @@
       <menus>
         <Menu mnemonicParsing="false" text="File">
           <items>
-            <MenuItem mnemonicParsing="false" text="New" />
-            <MenuItem mnemonicParsing="false" text="Open…" />
+            <MenuItem fx:id="newFileOption" mnemonicParsing="false" onAction="#createNewFile" text="New" />
+            <MenuItem fx:id="openFileOption" mnemonicParsing="false" onAction="#openFile" text="Open…" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" text="Close" />
-            <MenuItem mnemonicParsing="false" text="Save As…" />
+            <MenuItem fx:id="saveFileOption" mnemonicParsing="false" onAction="#saveFile" text="Save As…" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Quit" />
+            <MenuItem mnemonicParsing="false" onAction="#quitProgram" text="Quit" />
           </items>
         </Menu>
       </menus>
@@ -170,7 +170,7 @@
             <Pane fx:id="graphPane" prefHeight="200.0" prefWidth="200.0" />
         </items>
       </SplitPane>
-    <HBox id="HBox" alignment="BOTTOM_CENTER" prefHeight="43.0" prefWidth="900.0" spacing="5.0" VBox.vgrow="NEVER">
+    <HBox id="HBox" alignment="CENTER" prefHeight="43.0" prefWidth="900.0" spacing="5.0" VBox.vgrow="NEVER">
       <children>
         <Label maxHeight="1.7976931348623157E308" maxWidth="-1.0" text="OptiGraph" HBox.hgrow="ALWAYS">
           <font>
@@ -182,10 +182,10 @@
         </Label>
         <Pane prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS">
                <children>
-                  <HBox prefHeight="20.0" prefWidth="734.0">
+                  <HBox alignment="CENTER" prefHeight="20.0" prefWidth="734.0">
                      <children>
                         <ProgressBar fx:id="progressBar" prefHeight="20.0" prefWidth="423.0" progress="0.0" />
-                        <Label fx:id="progressLabel">
+                        <Label fx:id="progressLabel" textFill="#00000080">
                            <HBox.margin>
                               <Insets left="10.0" />
                            </HBox.margin>

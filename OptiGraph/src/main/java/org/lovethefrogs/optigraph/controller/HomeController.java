@@ -10,10 +10,17 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 import org.lovethefrogs.optigraph.model.Graph;
 import org.lovethefrogs.optigraph.model.Node;
 import org.lovethefrogs.optigraph.utils.NodeCellFactory;
 
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -131,8 +138,57 @@ public class HomeController {
                 return null;
             }
         };
-        progressBar.progressProperty().bind(task.progressProperty());
-        new Thread(task).start();
+        if (!graph.isEmpty()) {
+            progressBar.progressProperty().bind(task.progressProperty());
+            new Thread(task).start();
+        }
+    }
+
+    @FXML
+    protected void createNewFile() {
+        graph = new Graph();
+        graphPane.getChildren().clear();
+        nodeList.getItems().clear();
+    }
+
+    @FXML
+    protected void saveFile() throws IOException {
+        File savesDirectory = Paths.get(System.getProperty("user.dir"), "saves").toFile();
+        if (!savesDirectory.exists()) Files.createDirectories(Paths.get(System.getProperty("user.dir"), "saves"));
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save state");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Data files (*.dat)", "*.dat"));
+        fileChooser.setInitialDirectory(savesDirectory);
+        Window mainWindow = graphPane.getScene().getWindow();
+        File file = fileChooser.showSaveDialog(mainWindow);
+        if (file != null) {
+            if (!file.getName().endsWith(".dat")) {
+                file = new File(file.getParent(), file.getName() + ".dat");
+            }
+            saveData(file);
+        }
+    }
+
+    @FXML
+    protected void openFile() throws IOException, ClassNotFoundException {
+        File savesDirectory = Paths.get(System.getProperty("user.dir"), "saves").toFile();
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open state");
+        fileChooser.setInitialDirectory(savesDirectory);
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Data Files (*.dat)", "*.dat"));
+
+        File file = fileChooser.showOpenDialog(graphPane.getScene().getWindow());
+
+        if (file != null) loadData(file);
+        for (Node node : graph.getNodeList()) nodeList.getItems().add(node);
+    }
+
+    @FXML
+    protected void quitProgram() {
+        Stage stage = (Stage) graphPane.getScene().getWindow();
+        stage.close();
     }
 
     private static Circle generateCircle(double x, double y) {
@@ -156,4 +212,14 @@ public class HomeController {
         return new Line(mappedX1, mappedY1, mappedX2, mappedY2);
     }
 
+    private void saveData(File file) throws IOException {
+        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
+        out.writeObject(graph);
+        out.close();
+    }
+
+    private void loadData(File file) throws IOException, ClassNotFoundException {
+        ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
+        graph = (Graph) in.readObject();
+    }
 }
