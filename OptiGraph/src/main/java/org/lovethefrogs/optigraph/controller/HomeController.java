@@ -10,10 +10,18 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.stage.Window;
+
+import org.lovethefrogs.optigraph.model.Config;
 import org.lovethefrogs.optigraph.model.Graph;
 import org.lovethefrogs.optigraph.model.Node;
 import org.lovethefrogs.optigraph.utils.NodeCellFactory;
 
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +31,7 @@ public class HomeController {
     private static double PANE_HEIGHT;
     private static int MAX_COORD = 1;
     private Graph graph = new Graph();
+    private Config config = new Config();
     @FXML
     private TextField nameInput;
     @FXML
@@ -41,9 +50,26 @@ public class HomeController {
     private Label progressLabel;
 
     @FXML
-    private void initialize() {
+    private void initialize() throws IOException, ClassNotFoundException {
         nodeList.setCellFactory(new NodeCellFactory());
         nodeList.setPrefHeight(100000);
+        config.load();
+        if (config.getFile() != null) {
+            loadData(config.getFile());
+            MAX_COORD = config.getMax();
+        }
+        graphPane.sceneProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                Stage stage = (Stage) newValue.getWindow();
+                stage.setOnCloseRequest(event -> {
+                    try {
+                        quitProgram();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            }
+        });
     }
 
     @FXML
@@ -83,10 +109,15 @@ public class HomeController {
             @Override
             public Void call() throws InterruptedException {
                 int aux = 2 * (graph.getNodeCount() - 1) + graph.getNodeCount();
+                ArrayList<List<Integer>> result;
                 Platform.runLater(() -> progressLabel.setText("Calculating result"));
-                ArrayList<List<Integer>> result = graph.dijkstra(progress -> {
-                    updateProgress(progress, aux);
-                });
+                if (config.isDijkstra()) result = graph.dijkstra(progress -> {
+                        updateProgress(progress, aux);
+                    });
+                else result = graph.prim(progress -> {
+                        updateProgress(progress, aux);
+                    });
+
                 int step = graph.getNodeCount() - 1;
                 updateProgress(step, aux);
                 PANE_HEIGHT = graphPane.getHeight();
@@ -131,8 +162,70 @@ public class HomeController {
                 return null;
             }
         };
-        progressBar.progressProperty().bind(task.progressProperty());
-        new Thread(task).start();
+        if (!graph.isEmpty()) {
+            progressBar.progressProperty().bind(task.progressProperty());
+            new Thread(task).start();
+        }
+    }
+
+    @FXML
+    protected void createNewFile() {
+        graph = new Graph();
+        graphPane.getChildren().clear();
+        nodeList.getItems().clear();
+        config.setFile(null);
+    }
+
+    @FXML
+    protected void saveFile() throws IOException {
+        File savesDirectory = Paths.get(System.getProperty("user.dir"), "saves").toFile();
+        if (!savesDirectory.exists()) Files.createDirectories(Paths.get(System.getProperty("user.dir"), "saves"));
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save state");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Data files (*.dat)", "*.dat"));
+        fileChooser.setInitialDirectory(savesDirectory);
+        Window mainWindow = graphPane.getScene().getWindow();
+        File file = fileChooser.showSaveDialog(mainWindow);
+        if (file != null) {
+            if (!file.getName().endsWith(".dat")) {
+                file = new File(file.getParent(), file.getName() + ".dat");
+            }
+            saveData(file);
+            config.setFile(file);
+            config.setMax(MAX_COORD);
+        }
+    }
+
+    @FXML
+    protected void openFile() throws IOException, ClassNotFoundException {
+        File savesDirectory = Paths.get(System.getProperty("user.dir"), "saves").toFile();
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open state");
+        fileChooser.setInitialDirectory(savesDirectory);
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Data Files (*.dat)", "*.dat"));
+
+        File file = fileChooser.showOpenDialog(graphPane.getScene().getWindow());
+
+        if (file != null) {
+            loadData(file);
+            config.setFile(file);
+            config.setMax(MAX_COORD);
+        }
+    }
+
+    @FXML
+    protected void quitProgram() throws IOException {
+        Stage stage = (Stage) graphPane.getScene().getWindow();
+        stage.close();
+        if (config.getFile() != null) saveData(config.getFile());
+        config.save();
+    }
+
+    @FXML
+    protected void changeMode() {
+        config.setDijkstra(!config.isDijkstra());
     }
 
     private static Circle generateCircle(double x, double y) {
@@ -156,4 +249,16 @@ public class HomeController {
         return new Line(mappedX1, mappedY1, mappedX2, mappedY2);
     }
 
+    private void saveData(File file) throws IOException {
+        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
+        out.writeObject(graph);
+        out.close();
+    }
+
+    private void loadData(File file) throws IOException, ClassNotFoundException {
+        ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
+        graph = (Graph) in.readObject();
+        in.close();
+        for (Node node : graph.getNodeList()) nodeList.getItems().add(node);
+    }
 }
