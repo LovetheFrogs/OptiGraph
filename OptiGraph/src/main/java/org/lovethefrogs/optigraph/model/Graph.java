@@ -3,10 +3,11 @@ package org.lovethefrogs.optigraph.model;
 import org.lovethefrogs.optigraph.utils.Coords;
 import org.lovethefrogs.optigraph.utils.Sort;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class Graph {
+public class Graph implements Serializable {
     private HashMap<Integer, Node> nodes;
     private ArrayList<Node> nodeList;
     private int nodeCount;
@@ -216,7 +217,7 @@ public class Graph {
     }
 
 
-    public ArrayList<List<Integer>> dijkstra(Consumer<Double> progressUpdater) throws InterruptedException {
+    public ArrayList<List<Integer>> dijkstra(Consumer<Double> progressUpdater) {
         int src = center.getId();
         int step = 0;
         double[][] graphMatrix = populateMatrix(true);

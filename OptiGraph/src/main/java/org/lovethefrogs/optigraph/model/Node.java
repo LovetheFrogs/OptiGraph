@@ -2,9 +2,11 @@ package org.lovethefrogs.optigraph.model;
 
 import org.lovethefrogs.optigraph.utils.Coords;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Node {
+public class Node implements Serializable {
     private final int id;
     private String name;
     private Coords coords;
