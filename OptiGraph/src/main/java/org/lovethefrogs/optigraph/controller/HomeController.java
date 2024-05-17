@@ -1,13 +1,10 @@
 package org.lovethefrogs.optigraph.controller;
 
-import javafx.beans.binding.Bindings;
-import javafx.event.EventHandler;
+
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
-import javafx.scene.input.ScrollEvent;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -39,7 +36,9 @@ public class HomeController {
     @FXML
     private Pane graphPane;
     @FXML
-    private Button plotButton;
+    private ProgressBar progressBar;
+    @FXML
+    private Label progressLabel;
 
     @FXML
     private void initialize() {
@@ -80,38 +79,60 @@ public class HomeController {
 
     @FXML
     protected void onPlotButtonClick() {
-        ArrayList<List<Integer>> result = graph.dijkstra();
-        PANE_HEIGHT = graphPane.getHeight();
-        PANE_WIDTH = graphPane.getWidth();
-        ArrayList<Circle> nodes = new ArrayList<>();
-        ArrayList<Line> edges = new ArrayList<>();
-        graphPane.getChildren().clear();
-        ArrayList<Text> nodeLabels = new ArrayList<>();
-        for (Node node : graph.getNodeList()) {
-            Circle circle = generateCircle(node.getCoords().getX(), node.getCoords().getY());
-            if (node.isCenter()) {
-                circle.setFill(Color.RED);
-            } else {
-                circle.setFill(Color.BLACK);
+        Task task = new Task<Void>() {
+            @Override
+            public Void call() throws InterruptedException {
+                int aux = 2 * (graph.getNodeCount() - 1) + graph.getNodeCount();
+                Platform.runLater(() -> progressLabel.setText("Calculating result"));
+                ArrayList<List<Integer>> result = graph.dijkstra(progress -> {
+                    updateProgress(progress, aux);
+                });
+                int step = graph.getNodeCount() - 1;
+                updateProgress(step, aux);
+                PANE_HEIGHT = graphPane.getHeight();
+                PANE_WIDTH = graphPane.getWidth();
+
+                Platform.runLater(() -> {
+                    graphPane.getChildren().clear();
+                    progressLabel.setText("Plotting nodes");
+                });
+                for (Node node : graph.getNodeList()) {
+                    Platform.runLater(() -> {
+                                Circle circle = generateCircle(node.getCoords().getX(), node.getCoords().getY());
+                                if (node.isCenter()) {
+                                    circle.setFill(Color.RED);
+                                } else {
+                                    circle.setFill(Color.BLACK);
+                                }
+                                graphPane.getChildren().add(circle);
+
+                                Text nodeName = new Text(node.getName());
+                                nodeName.setX(circle.getCenterX() - nodeName.getLayoutBounds().getWidth() / 2);
+                                nodeName.setY(circle.getCenterY() - 10);
+                                graphPane.getChildren().add(nodeName);
+                    });
+                    step++;
+                    updateProgress(step, aux);
+                }
+                Platform.runLater(() -> progressLabel.setText("Plotting edges"));
+                HashMap<Integer, Node> dict = graph.getNodes();
+                for (List<Integer> e : result) {
+                    Node a = dict.get(e.get(0));
+                    Node b = dict.get(e.get(1));
+                    Platform.runLater(() -> {
+                                Line edge = generateEdge(a.getCoords().getX(), a.getCoords().getY(), b.getCoords().getX(), b.getCoords().getY());
+                                graphPane.getChildren().add(edge);
+                    });
+                    step++;
+                    updateProgress(step, aux);
+                }
+                updateProgress(0, aux);
+                Platform.runLater(() -> progressLabel.setText(""));
+                return null;
             }
-            nodes.add(circle);
-
-            Text nodeName = new Text(node.getName());
-            nodeName.setX(circle.getCenterX() - nodeName.getLayoutBounds().getWidth() / 2);
-            nodeName.setY(circle.getCenterY() - 10);
-            nodeLabels.add(nodeName);
-        }
-        HashMap<Integer, Node> dict = graph.getNodes();
-        for (List<Integer> e : result) {
-            Node a = dict.get(e.get(0));
-            Node b = dict.get(e.get(1));
-            Line edge = generateEdge(a.getCoords().getX(), a.getCoords().getY(), b.getCoords().getX(), b.getCoords().getY());
-            edges.add(edge);
-        }
-
-        for (Circle circle : nodes) graphPane.getChildren().add(circle);
-        for (Text text : nodeLabels) graphPane.getChildren().add(text);
-        for (Line line : edges) graphPane.getChildren().add(line);
+        };
+        progressBar.progressProperty().bind(task.progressProperty());
+        new Thread(task).start();
     }
 
     private static Circle generateCircle(double x, double y) {
