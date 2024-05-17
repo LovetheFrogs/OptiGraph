@@ -13,13 +13,14 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+
+import org.lovethefrogs.optigraph.model.Config;
 import org.lovethefrogs.optigraph.model.Graph;
 import org.lovethefrogs.optigraph.model.Node;
 import org.lovethefrogs.optigraph.utils.NodeCellFactory;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +31,7 @@ public class HomeController {
     private static double PANE_HEIGHT;
     private static int MAX_COORD = 1;
     private Graph graph = new Graph();
+    private Config config = new Config();
     @FXML
     private TextField nameInput;
     @FXML
@@ -51,6 +53,7 @@ public class HomeController {
     private void initialize() {
         nodeList.setCellFactory(new NodeCellFactory());
         nodeList.setPrefHeight(100000);
+        loadConfig();
     }
 
     @FXML
@@ -189,6 +192,11 @@ public class HomeController {
     protected void quitProgram() {
         Stage stage = (Stage) graphPane.getScene().getWindow();
         stage.close();
+    }
+
+    @FXML
+    protected void changeMode() {
+
     }
 
     private static Circle generateCircle(double x, double y) {
