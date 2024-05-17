@@ -178,7 +178,8 @@ public class Graph implements Serializable {
         return edgeList;
     }
 
-    public ArrayList<List<Integer>> prim() {
+    public ArrayList<List<Integer>> prim(Consumer<Double> progressUpdater) {
+        int step = 0;
         double[][] g = populateMatrix(false);
         int n = nodeCount;
         ArrayList<List<Integer>> edgeList = new ArrayList<>();
@@ -204,6 +205,8 @@ public class Graph implements Serializable {
                     key[v] = g[u][v];
                 }
             }
+            if (progressUpdater != null) progressUpdater.accept((double) step);
+            step++;
         }
 
         for (int i = 1; i < n; i++) {
