@@ -50,10 +50,26 @@ public class HomeController {
     private Label progressLabel;
 
     @FXML
-    private void initialize() {
+    private void initialize() throws IOException, ClassNotFoundException {
         nodeList.setCellFactory(new NodeCellFactory());
         nodeList.setPrefHeight(100000);
-        loadConfig();
+        config.load();
+        if (config.getFile() != null) {
+            loadData(config.getFile());
+            MAX_COORD = config.getMax();
+        }
+        graphPane.sceneProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                Stage stage = (Stage) newValue.getWindow();
+                stage.setOnCloseRequest(event -> {
+                    try {
+                        quitProgram();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            }
+        });
     }
 
     @FXML
@@ -93,10 +109,15 @@ public class HomeController {
             @Override
             public Void call() throws InterruptedException {
                 int aux = 2 * (graph.getNodeCount() - 1) + graph.getNodeCount();
+                ArrayList<List<Integer>> result;
                 Platform.runLater(() -> progressLabel.setText("Calculating result"));
-                ArrayList<List<Integer>> result = graph.dijkstra(progress -> {
-                    updateProgress(progress, aux);
-                });
+                if (config.isDijkstra()) result = graph.dijkstra(progress -> {
+                        updateProgress(progress, aux);
+                    });
+                else result = graph.prim(progress -> {
+                        updateProgress(progress, aux);
+                    });
+
                 int step = graph.getNodeCount() - 1;
                 updateProgress(step, aux);
                 PANE_HEIGHT = graphPane.getHeight();
@@ -152,6 +173,7 @@ public class HomeController {
         graph = new Graph();
         graphPane.getChildren().clear();
         nodeList.getItems().clear();
+        config.setFile(null);
     }
 
     @FXML
@@ -170,6 +192,8 @@ public class HomeController {
                 file = new File(file.getParent(), file.getName() + ".dat");
             }
             saveData(file);
+            config.setFile(file);
+            config.setMax(MAX_COORD);
         }
     }
 
@@ -184,19 +208,24 @@ public class HomeController {
 
         File file = fileChooser.showOpenDialog(graphPane.getScene().getWindow());
 
-        if (file != null) loadData(file);
-        for (Node node : graph.getNodeList()) nodeList.getItems().add(node);
+        if (file != null) {
+            loadData(file);
+            config.setFile(file);
+            config.setMax(MAX_COORD);
+        }
     }
 
     @FXML
-    protected void quitProgram() {
+    protected void quitProgram() throws IOException {
         Stage stage = (Stage) graphPane.getScene().getWindow();
         stage.close();
+        if (config.getFile() != null) saveData(config.getFile());
+        config.save();
     }
 
     @FXML
     protected void changeMode() {
-
+        config.setDijkstra(!config.isDijkstra());
     }
 
     private static Circle generateCircle(double x, double y) {
@@ -229,5 +258,7 @@ public class HomeController {
     private void loadData(File file) throws IOException, ClassNotFoundException {
         ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
         graph = (Graph) in.readObject();
+        in.close();
+        for (Node node : graph.getNodeList()) nodeList.getItems().add(node);
     }
 }
