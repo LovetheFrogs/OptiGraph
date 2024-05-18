@@ -176,7 +176,7 @@ public class HomeController {
     @FXML
     protected void openFile() throws IOException, ClassNotFoundException {
         File savesDirectory = Paths.get(System.getProperty("user.dir"), "saves").toFile();
-
+        if (!savesDirectory.exists()) Files.createDirectories(Paths.get(System.getProperty("user.dir"), "saves"));
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open state");
         fileChooser.setInitialDirectory(savesDirectory);

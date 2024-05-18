@@ -239,8 +239,8 @@ public class Graph implements Serializable {
         } else {
             for (List<Double> edge : graph) {
                 if (nodes.get(edge.get(0).intValue()).equals(center) || nodes.get(edge.get(1).intValue()).equals(center)) {
-                    if (!nodes.get(edge.get(0).intValue()).equals(center)) mat[edge.get(0).intValue()][edge.get(1).intValue()] = edge.get(2) + (nodes.get(edge.get(0).intValue()).getCoords().getX() + nodes.get(edge.get(0).intValue()).getCoords().getY()) * 0.7;
-                    else mat[edge.get(0).intValue()][edge.get(1).intValue()] = edge.get(2) + (nodes.get(edge.get(1).intValue()).getCoords().getX() + nodes.get(edge.get(1).intValue()).getCoords().getY()) * 0.7;
+                    if (!nodes.get(edge.get(0).intValue()).equals(center)) mat[edge.get(0).intValue()][edge.get(1).intValue()] = edge.get(2) + (nodes.get(edge.get(0).intValue()).getCoords().getX() + nodes.get(edge.get(0).intValue()).getCoords().getY()) * 0.75;
+                    else mat[edge.get(0).intValue()][edge.get(1).intValue()] = edge.get(2) + (nodes.get(edge.get(1).intValue()).getCoords().getX() + nodes.get(edge.get(1).intValue()).getCoords().getY()) * 0.75;
 
                 }
                 else mat[edge.get(0).intValue()][edge.get(1).intValue()] = edge.get(2);
