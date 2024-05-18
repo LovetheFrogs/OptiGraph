@@ -58,18 +58,7 @@ public class HomeController {
             loadData(config.getFile());
             MAX_COORD = config.getMax();
         }
-        graphPane.sceneProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                Stage stage = (Stage) newValue.getWindow();
-                stage.setOnCloseRequest(event -> {
-                    try {
-                        quitProgram();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-            }
-        });
+        bindWindowClose();
     }
 
     @FXML
@@ -82,7 +71,7 @@ public class HomeController {
             if (aux > MAX_COORD) MAX_COORD = aux;
             graph.addNode(name, x, y);
             nodeList.getItems().add(graph.getNodes().get(graph.getNodes().size() - 1));
-        } catch(Exception e) {
+        } catch (NumberFormatException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Invalid Input data");
             alert.setContentText("The values for the coordinates must be numbers.");
@@ -95,7 +84,7 @@ public class HomeController {
         try {
             int id = Integer.parseInt(idInput.getText());
             nodeList.getItems().remove(graph.removeNode(graph.getNodes().get(id)));
-        } catch(Exception e) {
+        } catch(NumberFormatException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Invalid Input data");
             alert.setContentText("The value for the id must be a number.");
@@ -107,7 +96,7 @@ public class HomeController {
     protected void onPlotButtonClick() {
         Task task = new Task<Void>() {
             @Override
-            public Void call() throws InterruptedException {
+            public Void call() {
                 int aux = 2 * (graph.getNodeCount() - 1) + graph.getNodeCount();
                 ArrayList<List<Integer>> result;
                 Platform.runLater(() -> progressLabel.setText("Calculating result"));
@@ -128,20 +117,7 @@ public class HomeController {
                     progressLabel.setText("Plotting nodes");
                 });
                 for (Node node : graph.getNodeList()) {
-                    Platform.runLater(() -> {
-                                Circle circle = generateCircle(node.getCoords().getX(), node.getCoords().getY());
-                                if (node.isCenter()) {
-                                    circle.setFill(Color.RED);
-                                } else {
-                                    circle.setFill(Color.BLACK);
-                                }
-                                graphPane.getChildren().add(circle);
-
-                                Text nodeName = new Text(node.getName());
-                                nodeName.setX(circle.getCenterX() - nodeName.getLayoutBounds().getWidth() / 2);
-                                nodeName.setY(circle.getCenterY() - 10);
-                                graphPane.getChildren().add(nodeName);
-                    });
+                    Platform.runLater(() -> drawCircles(node));
                     step++;
                     updateProgress(step, aux);
                 }
@@ -260,5 +236,35 @@ public class HomeController {
         graph = (Graph) in.readObject();
         in.close();
         for (Node node : graph.getNodeList()) nodeList.getItems().add(node);
+    }
+
+    private void bindWindowClose() {
+        graphPane.sceneProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                Stage stage = (Stage) newValue.getWindow();
+                stage.setOnCloseRequest(event -> {
+                    try {
+                        quitProgram();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            }
+        });
+    }
+
+    private void drawCircles(Node node) {
+        Circle circle = generateCircle(node.getCoords().getX(), node.getCoords().getY());
+        if (node.isCenter()) {
+            circle.setFill(Color.RED);
+        } else {
+            circle.setFill(Color.BLACK);
+        }
+        graphPane.getChildren().add(circle);
+
+        Text nodeName = new Text(node.getName());
+        nodeName.setX(circle.getCenterX() - nodeName.getLayoutBounds().getWidth() / 2);
+        nodeName.setY(circle.getCenterY() - 10);
+        graphPane.getChildren().add(nodeName);
     }
 }
