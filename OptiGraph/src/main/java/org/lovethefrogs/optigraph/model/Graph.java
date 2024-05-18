@@ -40,65 +40,6 @@ public class Graph implements Serializable {
         return this.nodeCount == 0;
     }
 
-    private double findParent(double[] parent, double node) {
-        if (parent[(int) node] != node) {
-            parent[(int) node] = findParent(parent, parent[(int) node]);
-        }
-        return parent[(int) node];
-    }
-
-    private void union(double[] parent, double[] rank, double x, double y) {
-        double xRoot = findParent(parent, x);
-        double yRoot = findParent(parent, y);
-
-        if (rank[(int) xRoot] < rank[(int) yRoot]) {
-            parent[(int) xRoot] = yRoot;
-        } else if (rank[(int) xRoot] > rank[(int) yRoot]) {
-            parent[(int) yRoot] = xRoot;
-        } else {
-            parent[(int) yRoot] = xRoot;
-            rank[(int) xRoot]++;
-        }
-    }
-
-    private double[][] populateMatrix(boolean dijkstraMode) {
-        double[][] mat = new double[nodeCount][nodeCount];
-
-        for (int i = 0; i < nodeCount; i++) {
-            for (int j = 0; j < nodeCount; j++) mat[i][j] = Double.POSITIVE_INFINITY;
-        }
-        if (!dijkstraMode) {
-            for (List<Double> edge : graph) {
-                mat[edge.get(0).intValue()][edge.get(1).intValue()] = edge.get(2);
-            }
-        } else {
-            for (List<Double> edge : graph) {
-                if (nodes.get(edge.get(0).intValue()).equals(center) || nodes.get(edge.get(1).intValue()).equals(center)) {
-                    if (!nodes.get(edge.get(0).intValue()).equals(center)) mat[edge.get(0).intValue()][edge.get(1).intValue()] = edge.get(2) + (nodes.get(edge.get(0).intValue()).getCoords().getX() + nodes.get(edge.get(0).intValue()).getCoords().getY()) * 0.7;
-                    else mat[edge.get(0).intValue()][edge.get(1).intValue()] = edge.get(2) + (nodes.get(edge.get(1).intValue()).getCoords().getX() + nodes.get(edge.get(1).intValue()).getCoords().getY()) * 0.7;
-
-                }
-                else mat[edge.get(0).intValue()][edge.get(1).intValue()] = edge.get(2);
-            }
-        }
-
-        return mat;
-    }
-
-    private int minKey(double[] key, boolean[] visited) {
-        double min = Double.MAX_VALUE;
-        int minIndex = -1;
-
-        for (int v = 0; v < key.length; v++) {
-            if (!visited[v] && key[v] < min) {
-                min = key[v];
-                minIndex = v;
-            }
-        }
-
-        return minIndex;
-    }
-
     public Node addNode(String name, int x, int y) {
         Node newNode = new Node(this.nodeCount, name, new Coords(x, y), this.isEmpty());
 
@@ -219,7 +160,6 @@ public class Graph implements Serializable {
         return edgeList;
     }
 
-
     public ArrayList<List<Integer>> dijkstra(Consumer<Double> progressUpdater) {
         int src = center.getId();
         int step = 0;
@@ -263,5 +203,64 @@ public class Graph implements Serializable {
         }
 
         return edgeList;
+    }
+
+    private double findParent(double[] parent, double node) {
+        if (parent[(int) node] != node) {
+            parent[(int) node] = findParent(parent, parent[(int) node]);
+        }
+        return parent[(int) node];
+    }
+
+    private void union(double[] parent, double[] rank, double x, double y) {
+        double xRoot = findParent(parent, x);
+        double yRoot = findParent(parent, y);
+
+        if (rank[(int) xRoot] < rank[(int) yRoot]) {
+            parent[(int) xRoot] = yRoot;
+        } else if (rank[(int) xRoot] > rank[(int) yRoot]) {
+            parent[(int) yRoot] = xRoot;
+        } else {
+            parent[(int) yRoot] = xRoot;
+            rank[(int) xRoot]++;
+        }
+    }
+
+    private double[][] populateMatrix(boolean dijkstraMode) {
+        double[][] mat = new double[nodeCount][nodeCount];
+
+        for (int i = 0; i < nodeCount; i++) {
+            for (int j = 0; j < nodeCount; j++) mat[i][j] = Double.POSITIVE_INFINITY;
+        }
+        if (!dijkstraMode) {
+            for (List<Double> edge : graph) {
+                mat[edge.get(0).intValue()][edge.get(1).intValue()] = edge.get(2);
+            }
+        } else {
+            for (List<Double> edge : graph) {
+                if (nodes.get(edge.get(0).intValue()).equals(center) || nodes.get(edge.get(1).intValue()).equals(center)) {
+                    if (!nodes.get(edge.get(0).intValue()).equals(center)) mat[edge.get(0).intValue()][edge.get(1).intValue()] = edge.get(2) + (nodes.get(edge.get(0).intValue()).getCoords().getX() + nodes.get(edge.get(0).intValue()).getCoords().getY()) * 0.7;
+                    else mat[edge.get(0).intValue()][edge.get(1).intValue()] = edge.get(2) + (nodes.get(edge.get(1).intValue()).getCoords().getX() + nodes.get(edge.get(1).intValue()).getCoords().getY()) * 0.7;
+
+                }
+                else mat[edge.get(0).intValue()][edge.get(1).intValue()] = edge.get(2);
+            }
+        }
+
+        return mat;
+    }
+
+    private int minKey(double[] key, boolean[] visited) {
+        double min = Double.MAX_VALUE;
+        int minIndex = -1;
+
+        for (int v = 0; v < key.length; v++) {
+            if (!visited[v] && key[v] < min) {
+                min = key[v];
+                minIndex = v;
+            }
+        }
+
+        return minIndex;
     }
 }
