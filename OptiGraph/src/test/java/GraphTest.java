@@ -29,17 +29,17 @@ public class GraphTest extends TestCase {
 
     public void testKruskal() {
         ArrayList<List<Integer>> result = graph.kruskal();
-        System.out.println(result);
+        assertEquals(result.size(), 3);
     }
 
     public void testPrim() {
         ArrayList<List<Integer>> result = graph.prim(null);
-        System.out.println(result);
+        assertEquals(result.size(), 3);
     }
 
     public void testDijkstra() {
         ArrayList<List<Integer>> result = graph.dijkstra(null);
-        System.out.println(result);
+        assertEquals(result.size(), 3);
     }
 
     public void testAlgoSpeedComparison() {
