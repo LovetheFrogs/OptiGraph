@@ -8,7 +8,7 @@ You can either download a pre-compiled version or compile one yourself.
 
 ### Download a compiled version
 
-You can head to the releases section and download the latest version's .jar file. Then double-click and run it.
+You can head to the releases section and download the latest version. Extract the file and run the jar file.
 
 ### Compiling Optigraph for yourself
 
@@ -16,7 +16,7 @@ Assuming you have git installed, run
 
 ```git clone https://github.com/LovetheFrogs/OptiGraph```
 
-then run `cd OptiGraph/OptiGraph/src/main/java/org/lovethefrogs/optigraph`, compile it with `javac OptiGraphApplication.java` and run the .jar file with `java -jar OptiGraphApplication.jar`.
+then run `cd OptiGraph`, compile it with `mvn install` and run the .jar file with `java -jar target/OptiGraph-1.0-shaded.jar`.
 
 ## Using OptiGraph
 
