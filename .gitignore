@@ -40,3 +40,4 @@ build/
 
 saves/
 config.dat
+*.zip
